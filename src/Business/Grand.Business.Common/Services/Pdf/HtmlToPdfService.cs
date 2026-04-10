@@ -44,6 +44,8 @@ public class HtmlToPdfService : IPdfService
         var html = await _viewRenderService.RenderToStringAsync(OrderTemplate,
             new ValueTuple<IList<Order>, string>(orders, vendorId));
         TextReader sr = new StringReader(html);
+        //Scryber uses Path.GetDirectoryName(LoadedSource) to resolve relative image paths,
+        //so we must pass a file path (not a directory) rooted in wwwroot.
         var basePath = Path.Combine(_webHostEnvironment.WebRootPath, "index.html");
         using var doc = Document.ParseDocument(sr, basePath, ParseSourceType.DynamicContent);
         doc.SaveAsPDF(stream);
@@ -80,6 +82,8 @@ public class HtmlToPdfService : IPdfService
 
         var html = await _viewRenderService.RenderToStringAsync(ShipmentsTemplate, shipments);
         TextReader sr = new StringReader(html);
+        //Scryber uses Path.GetDirectoryName(LoadedSource) to resolve relative image paths,
+        //so we must pass a file path (not a directory) rooted in wwwroot.
         var basePath = Path.Combine(_webHostEnvironment.WebRootPath, "index.html");
         using var doc = Document.ParseDocument(sr, basePath, ParseSourceType.DynamicContent);
         doc.SaveAsPDF(stream);
